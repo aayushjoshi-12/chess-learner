@@ -1,20 +1,33 @@
-class Piece:
-    pass
+class Piece():
+    isWhite : bool = None
+    value : int = None
+    position : tuple = None
 
-class King(Piece): 
-    pass
+    def __init__(self, isWhite, value):
+        Piece.isWhite = isWhite
+        Piece.value = value
+        Piece.position = (0, None) if isWhite else (7, None)
+
+class King(Piece):
+    def __init__(self, isWhite):
+        super().__init__(isWhite, None)
 
 class Queen(Piece):
-    pass
+    def __init__(self, isWhite):
+        super().__init__(isWhite, 9)
 
 class Rook(Piece):
-    pass
+    def __init__(self, isWhite):
+        super().__init__(isWhite, 5)
 
 class Bishop(Piece):
-    pass
+    def __init__(self, isWhite):
+        super().__init__(isWhite, 3)
 
 class Knight(Piece):
-    pass
+    def __init__(self, isWhite):
+        super().__init__(isWhite, 3)
 
 class Pawn(Piece):
-    pass
+    def __init__(self, isWhite):
+        super().__init__(isWhite, 1)

@@ -1,9 +1,11 @@
 import pygame
+from board import Board
 
 pygame.init()
 screen = pygame.display.set_mode((631, 632))
 clock = pygame.time.Clock()
 running = True
+# board = Board()
 
 board_img = pygame.image.load("chess/assets/images/board.png").convert()
 
@@ -15,5 +17,6 @@ while running :
     screen.blit(board_img, (0,0))
     pygame.display.flip()
     clock.tick(15)
+    # board.display()
 
 pygame.quit()
