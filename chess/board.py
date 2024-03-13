@@ -15,23 +15,28 @@ class Board:
                 if piece is None:
                     print("0", end="")
                 else:
-                    print(piece.name, end="")
+                    print(piece.icon, end="")
             print()
-            
 
+
+def square_name(coordinates):
+    rank, file = coordinates
+    return f"{chr(file + 97)}{rank}"
+            
 def square_exists(coordinates):
     rank, file = coordinates
     return (rank >= 0 and rank < 8) and (file >= 0 and file < 8)
 
-def not_friendly_fire(piece, coordinates):
+def square_empty(coordinates, position = Board.position):
     rank, file = coordinates
-    return Board.position[rank][file].is_white ^ piece.is_white
+    return position[rank][file] == None
 
-def square_empty(coordinates):
+def not_friendly_fire(piece, coordinates, position = Board.position):
     rank, file = coordinates
-    return Board.position[rank][file] == None
+    return position[rank][file].is_white ^ piece.is_white
 
 def calulate_diagonal_moves(piece):
+    # try simplifying it later and make it a bit less hardcoded if it is even possible
     all_possible_moves = []
     new_coordinate = [piece.coordinates[0] + 1, piece.coordinates[1] + 1]
     while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
@@ -84,3 +89,8 @@ def calculate_straight_moves(piece):
         new_coordinate[1] -= 1
     
     return all_possible_moves
+
+def move_name(piece_name, from_, to):
+    # use + , x , # , 0-0 , 0-0-0 , = for check, capture, mate, shortcastle, longcastle, promotion
+    # it is for vanity we'll deal with this later
+    pass

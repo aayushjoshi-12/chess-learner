@@ -9,10 +9,10 @@ running = True
 
 board_img = pygame.image.load("chess/assets/images/board.png").convert()
 
-black = Player(isWhite=False)
-white = Player(isWhite=True)
+black = Player(is_white=False)
+white = Player(is_white=True)
 
-board = Board(blackPlayer=black, whitePlayer=white)
+board = Board(black_player=black, white_player=white)
 board.display()
 
 while running : 

@@ -7,10 +7,19 @@ black = Player(is_white=False)
 board = Board(black, white)
 
 running = True
+whites_turn = True
+check_mate = False
 
 while running:
-    board.display()
-    for piece in black.pieces:
-        if not isinstance(piece, Knight) :
-            print(piece.all_possible_moves())
-    running = False
+    if whites_turn:
+        white.make_move()
+    else :
+        black.make_move()
+        running = False
+    
+    whites_turn = not whites_turn
+    # if check_mate:
+    #     running = False
+
+# think for logic for check and check mate and game finish
+# think for logic of piece capture
