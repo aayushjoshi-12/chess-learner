@@ -9,17 +9,16 @@ board = Board(black, white)
 running = True
 whites_turn = True
 check_mate = False
+n_moves = 0
 
-while running:
+while n_moves < 4:
+    n_moves += 1
     if whites_turn:
         white.make_move()
     else :
         black.make_move()
-        running = False
-    
     whites_turn = not whites_turn
-    # if check_mate:
-    #     running = False
+    board.display()
 
 # think for logic for check and check mate and game finish
 # think for logic of piece capture

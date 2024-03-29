@@ -1,3 +1,7 @@
+from collections import namedtuple
+
+Coordinates = namedtuple("Coordinates", ["rank", "file"])
+
 class Board:
     position = []
 
@@ -18,79 +22,71 @@ class Board:
                     print(piece.icon, end="")
             print()
 
-
 def square_name(coordinates):
-    rank, file = coordinates
-    return f"{chr(file + 97)}{rank}"
+    return f"{chr(coordinates.file + 97)}{coordinates.rank + 1}"
             
 def square_exists(coordinates):
     rank, file = coordinates
     return (rank >= 0 and rank < 8) and (file >= 0 and file < 8)
 
-def square_empty(coordinates, position = Board.position):
-    rank, file = coordinates
-    return position[rank][file] == None
+def square_empty(coordinates, board=None):
+    if board is None: board = Board.position
+    return board[coordinates.rank][coordinates.file] == None
 
-def not_friendly_fire(piece, coordinates, position = Board.position):
-    rank, file = coordinates
-    return position[rank][file].is_white ^ piece.is_white
+def not_friendly_fire(piece, coordinates, board=None):
+    if board is None: board = Board.position
+    return board[coordinates.rank][coordinates.file].is_white ^ piece.is_white
 
-def calulate_diagonal_moves(piece):
-    # try simplifying it later and make it a bit less hardcoded if it is even possible
+
+def calculate_diagonal_moves(piece):
     all_possible_moves = []
-    new_coordinate = [piece.coordinates[0] + 1, piece.coordinates[1] + 1]
+    new_coordinate = Coordinates(piece.coordinates.rank + 1, piece.coordinates.file + 1)
     while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
         all_possible_moves += [new_coordinate]
-        if not_friendly_fire(piece, new_coordinate): break
-        new_coordinate[0] += 1
-        new_coordinate[1] += 1
-    new_coordinate = [piece.coordinates[0] - 1, piece.coordinates[1] + 1]
+        new_coordinate = Coordinates(new_coordinate.rank + 1, new_coordinate.file + 1)
+
+    new_coordinate = Coordinates(piece.coordinates.rank - 1, piece.coordinates.file + 1)
     while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
         all_possible_moves += [new_coordinate]
-        if not_friendly_fire(piece, new_coordinate): break
-        new_coordinate[0] -= 1
-        new_coordinate[1] += 1
-    new_coordinate = [piece.coordinates[0] - 1, piece.coordinates[1] - 1]
+        new_coordinate = Coordinates(new_coordinate.rank - 1, new_coordinate.file + 1)
+
+    new_coordinate = Coordinates(piece.coordinates.rank - 1, piece.coordinates.file - 1)
     while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
         all_possible_moves += [new_coordinate]
-        if not_friendly_fire(piece, new_coordinate): break
-        new_coordinate[0] -= 1
-        new_coordinate[1] += 1
-    new_coordinate = [piece.coordinates[0] + 1, piece.coordinates[1] - 1]
+        new_coordinate = Coordinates(new_coordinate.rank - 1, new_coordinate.file - 1)
+
+    new_coordinate = Coordinates(piece.coordinates.rank + 1, piece.coordinates.file - 1)
     while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
         all_possible_moves += [new_coordinate]
-        if not_friendly_fire(piece, new_coordinate): break
-        new_coordinate[0] += 1
-        new_coordinate[1] -= 1
+        new_coordinate = Coordinates(new_coordinate.rank + 1, new_coordinate.file - 1)
 
     return all_possible_moves
 
 def calculate_straight_moves(piece):
     all_possible_moves = []
-    new_coordinate = [piece.coordinates[0] + 1, piece.coordinates[1]]
+    new_coordinate = Coordinates(piece.coordinates.rank + 1, piece.coordinates.file)
     while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
         all_possible_moves += [new_coordinate]
-        if not_friendly_fire(piece, new_coordinate): break
-        new_coordinate[0] += 1
-    new_coordinate = [piece.coordinates[0] - 1, piece.coordinates[1]]
+        new_coordinate = Coordinates(new_coordinate.rank + 1, new_coordinate.file)
+
+    new_coordinate = Coordinates(piece.coordinates.rank - 1, piece.coordinates.file)
     while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
         all_possible_moves += [new_coordinate]
-        if not_friendly_fire(piece, new_coordinate): break
-        new_coordinate[0] -= 1
-    new_coordinate = [piece.coordinates[0], piece.coordinates[1] + 1]
+        new_coordinate = Coordinates(new_coordinate.rank - 1, new_coordinate.file)
+
+    new_coordinate = Coordinates(piece.coordinates.rank, piece.coordinates.file + 1)
     while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
         all_possible_moves += [new_coordinate]
-        if not_friendly_fire(piece, new_coordinate): break
-        new_coordinate[1] += 1
-    new_coordinate = [piece.coordinates[0], piece.coordinates[1] - 1]
+        new_coordinate = Coordinates(new_coordinate.rank, new_coordinate.file + 1)
+
+    new_coordinate = Coordinates(piece.coordinates.rank, piece.coordinates.file - 1)
     while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
         all_possible_moves += [new_coordinate]
-        if not_friendly_fire(piece, new_coordinate): break
-        new_coordinate[1] -= 1
+        new_coordinate = Coordinates(new_coordinate.rank, new_coordinate.file - 1)
     
     return all_possible_moves
 
-def move_name(piece_name, from_, to):
+def move_name(piece_name, initial, final):
     # use + , x , # , 0-0 , 0-0-0 , = for check, capture, mate, shortcastle, longcastle, promotion
     # it is for vanity we'll deal with this later
     pass
