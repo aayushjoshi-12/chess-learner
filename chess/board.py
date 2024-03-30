@@ -1,4 +1,15 @@
 from collections import namedtuple
+from enum import Enum
+
+class Direction(Enum):
+    UP = (-1, 0)
+    DOWN = (1, 0)
+    LEFT = (0, -1)
+    RIGHT = (0, 1)
+    UP_LEFT = (-1, -1)
+    UP_RIGHT = (-1, 1)
+    DOWN_LEFT = (1, -1)
+    DOWN_RIGHT = (1, 1)
 
 Coordinates = namedtuple("Coordinates", ["rank", "file"])
 
@@ -37,53 +48,38 @@ def not_friendly_fire(piece, coordinates, board=None):
     if board is None: board = Board.position
     return board[coordinates.rank][coordinates.file].is_white ^ piece.is_white
 
-
 def calculate_diagonal_moves(piece):
     all_possible_moves = []
-    new_coordinate = Coordinates(piece.coordinates.rank + 1, piece.coordinates.file + 1)
-    while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
-        all_possible_moves += [new_coordinate]
-        new_coordinate = Coordinates(new_coordinate.rank + 1, new_coordinate.file + 1)
-
-    new_coordinate = Coordinates(piece.coordinates.rank - 1, piece.coordinates.file + 1)
-    while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
-        all_possible_moves += [new_coordinate]
-        new_coordinate = Coordinates(new_coordinate.rank - 1, new_coordinate.file + 1)
-
-    new_coordinate = Coordinates(piece.coordinates.rank - 1, piece.coordinates.file - 1)
-    while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
-        all_possible_moves += [new_coordinate]
-        new_coordinate = Coordinates(new_coordinate.rank - 1, new_coordinate.file - 1)
-
-    new_coordinate = Coordinates(piece.coordinates.rank + 1, piece.coordinates.file - 1)
-    while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
-        all_possible_moves += [new_coordinate]
-        new_coordinate = Coordinates(new_coordinate.rank + 1, new_coordinate.file - 1)
+    position = piece.coordinates
+    all_directions = [
+        Direction.UP_LEFT,
+        Direction.UP_RIGHT,
+        Direction.DOWN_LEFT,
+        Direction.DOWN_RIGHT,
+    ]
+    for direction in all_directions:
+        new_coordinate = Coordinates(*tuple(p + d for p, d in zip((position.rank, position.file), direction.value)))    
+        while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
+            all_possible_moves += [new_coordinate]
+            new_coordinate = Coordinates(*tuple(p + d for p, d in zip((new_coordinate.rank, new_coordinate.file), direction.value)))
 
     return all_possible_moves
 
 def calculate_straight_moves(piece):
     all_possible_moves = []
-    new_coordinate = Coordinates(piece.coordinates.rank + 1, piece.coordinates.file)
-    while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
-        all_possible_moves += [new_coordinate]
-        new_coordinate = Coordinates(new_coordinate.rank + 1, new_coordinate.file)
-
-    new_coordinate = Coordinates(piece.coordinates.rank - 1, piece.coordinates.file)
-    while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
-        all_possible_moves += [new_coordinate]
-        new_coordinate = Coordinates(new_coordinate.rank - 1, new_coordinate.file)
-
-    new_coordinate = Coordinates(piece.coordinates.rank, piece.coordinates.file + 1)
-    while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
-        all_possible_moves += [new_coordinate]
-        new_coordinate = Coordinates(new_coordinate.rank, new_coordinate.file + 1)
-
-    new_coordinate = Coordinates(piece.coordinates.rank, piece.coordinates.file - 1)
-    while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
-        all_possible_moves += [new_coordinate]
-        new_coordinate = Coordinates(new_coordinate.rank, new_coordinate.file - 1)
-    
+    position = piece.coordinates
+    all_directions = [
+        Direction.UP,
+        Direction.RIGHT,
+        Direction.DOWN,
+        Direction.LEFT,
+    ]
+    for direction in all_directions:
+        new_coordinate = Coordinates(*tuple(p + d for p, d in zip((position.rank, position.file), direction.value)))    
+        while square_exists(new_coordinate) and (square_empty(new_coordinate) or not_friendly_fire(piece, new_coordinate)):
+            all_possible_moves += [new_coordinate]
+            new_coordinate = Coordinates(*tuple(p + d for p, d in zip((new_coordinate.rank, new_coordinate.file), direction.value)))
+            
     return all_possible_moves
 
 def move_name(piece_name, initial, final):

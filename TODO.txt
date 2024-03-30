@@ -1,5 +1,2 @@
-add en passant and castling
-use stockfish
-figure out how to use the proper FEN notation to use chess engine
-further develop pygame app
-someday learn rust and transfer the whole chessgame to rust
+fix the pawn moves (first move twice functionality)
+use the enum class directions in no_check later

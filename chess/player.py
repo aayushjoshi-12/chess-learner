@@ -34,8 +34,8 @@ class Player:
         moves_dict = {}
         i = 0
         for piece in self.pieces:
-            for move in piece.all_possible_moves():
-                move = Move(piece, piece.coordinates, move)
+            for possible_move in piece.all_possible_moves():
+                move = Move(piece, piece.coordinates, possible_move)
                 new_position = copy.deepcopy(Board.position)
                 new_position[move.final.rank][move.final.file] = piece
                 new_position[move.initial.rank][move.initial.file] = None
@@ -88,7 +88,7 @@ def no_check(player, new_position):
     ]
     for direction in check_straight_directions:
         new_coordinate = Coordinates(*tuple(p + d for p, d in zip((position.rank, position.file), direction)))
-        if square_exists(new_coordinate) and square_empty(new_coordinate):
+        if square_exists(new_coordinate) and square_empty(new_coordinate, new_position):
             new_coordinate = Coordinates(*tuple(p + d for p, d in zip((new_coordinate.rank, new_coordinate.file), direction)))
         elif square_exists(new_coordinate) and not_friendly_fire(player, new_coordinate, new_position) and isinstance(new_position[new_coordinate[0]][new_coordinate[1]], (Queen, Rook)):
             return False
@@ -101,9 +101,9 @@ def no_check(player, new_position):
         (-1, 1),
         (-1, -1),
     ]
-    for direction in check_straight_directions:
+    for direction in check_diagonal_directions:
         new_coordinate = Coordinates(*tuple(p + d for p, d in zip((position.rank, position.file), direction)))
-        if square_exists(new_coordinate) and square_empty(new_coordinate):
+        if square_exists(new_coordinate) and square_empty(new_coordinate, new_position):
             new_coordinate = Coordinates(*tuple(p + d for p, d in zip((new_coordinate.rank, new_coordinate.file), direction)))
         elif square_exists(new_coordinate) and not_friendly_fire(player, new_coordinate, new_position) and isinstance(new_position[new_coordinate[0]][new_coordinate[1]], (Queen, Bishop)):
             return False
