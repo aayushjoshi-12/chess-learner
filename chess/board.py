@@ -1,6 +1,8 @@
 from collections import namedtuple
 from enum import Enum
 
+Coordinates = namedtuple("Coordinates", ["rank", "file"])
+
 class Direction(Enum):
     UP = (-1, 0)
     DOWN = (1, 0)
@@ -11,7 +13,6 @@ class Direction(Enum):
     DOWN_LEFT = (1, -1)
     DOWN_RIGHT = (1, 1)
 
-Coordinates = namedtuple("Coordinates", ["rank", "file"])
 
 class Board:
     position = []
@@ -25,7 +26,7 @@ class Board:
                 self.position[rank][file] = piece
 
     def display(self):
-        for rank in self.position:
+        for rank in reversed(self.position): # make it so that you dont have to reverse here rather just change the coordinates
             for piece in rank:
                 if piece is None:
                     print("0", end="")
@@ -33,20 +34,25 @@ class Board:
                     print(piece.icon, end="")
             print()
 
+
 def square_name(coordinates):
     return f"{chr(coordinates.file + 97)}{coordinates.rank + 1}"
-            
+
+
 def square_exists(coordinates):
     rank, file = coordinates
     return (rank >= 0 and rank < 8) and (file >= 0 and file < 8)
+
 
 def square_empty(coordinates, board=None):
     if board is None: board = Board.position
     return board[coordinates.rank][coordinates.file] == None
 
+
 def not_friendly_fire(piece, coordinates, board=None):
     if board is None: board = Board.position
     return board[coordinates.rank][coordinates.file].is_white ^ piece.is_white
+
 
 def calculate_diagonal_moves(piece):
     all_possible_moves = []
@@ -65,6 +71,7 @@ def calculate_diagonal_moves(piece):
 
     return all_possible_moves
 
+
 def calculate_straight_moves(piece):
     all_possible_moves = []
     position = piece.coordinates
@@ -81,6 +88,7 @@ def calculate_straight_moves(piece):
             new_coordinate = Coordinates(*tuple(p + d for p, d in zip((new_coordinate.rank, new_coordinate.file), direction.value)))
             
     return all_possible_moves
+
 
 def move_name(piece_name, initial, final):
     # use + , x , # , 0-0 , 0-0-0 , = for check, capture, mate, shortcastle, longcastle, promotion

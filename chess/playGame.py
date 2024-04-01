@@ -1,4 +1,4 @@
-from player import Player
+from player import Player, make_move
 from board import Board
 from pieces import *
 
@@ -9,16 +9,13 @@ board = Board(black, white)
 running = True
 whites_turn = True
 check_mate = False
-n_moves = 0
+board.display()
 
-while n_moves < 4:
-    n_moves += 1
-    if whites_turn:
-        white.make_move()
-    else :
-        black.make_move()
-    whites_turn = not whites_turn
-    board.display()
+if __name__ == "__main__":
+    while running:
+        make_move(white, black)
+        board.display()
+        make_move(black, white)
+        board.display()
 
-# think for logic for check and check mate and game finish
-# think for logic of piece capture
+### Fools Mate 11 10 13 21

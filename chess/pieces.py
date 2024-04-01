@@ -1,12 +1,12 @@
 from collections import namedtuple
-from board import Board, square_exists, square_empty, square_name, not_friendly_fire, calculate_straight_moves, calculate_diagonal_moves
+from board import Board, Direction, square_exists, square_empty, square_name, not_friendly_fire, calculate_straight_moves, calculate_diagonal_moves
 
 Coordinates = namedtuple("Coordinates", ["rank", "file"])
 
 class King:
     def __init__(self, is_white):
         self.is_white = is_white
-        self.coordinates = Coordinates(0, 4) if is_white else Coordinates(7, 3)
+        self.coordinates = Coordinates(0, 4) if is_white else Coordinates(7, 4)
         self.icon = "K" if is_white else "k"
         self.name = "King"
     
@@ -34,7 +34,7 @@ class Queen:
     def __init__(self, is_white):
         self.is_white = is_white
         self.value = 9
-        self.coordinates = Coordinates(0, 3) if is_white else Coordinates(7, 4)
+        self.coordinates = Coordinates(0, 3) if is_white else Coordinates(7, 3)
         self.icon = "Q" if is_white else "q"
         self.name = "Queen"
 
@@ -128,24 +128,20 @@ class Pawn:
 
     def all_possible_moves(self):
         # en passant is still remaining
-        all_possible_moves = []        
+        all_possible_moves = []
 
         if self.first_move :
-            # if first move two options to move 1 or 2 steps
             new_coordinate = Coordinates(self.coordinates.rank + 1 if self.is_white else self.coordinates.rank - 1, self.coordinates.file)
-            if square_exists(new_coordinate) or not_friendly_fire(self, new_coordinate):
+            if square_exists(new_coordinate) and square_empty(new_coordinate):
                 all_possible_moves += [new_coordinate]
             new_coordinate = Coordinates(self.coordinates.rank + 2 if self.is_white else self.coordinates.rank - 2, self.coordinates.file)
-            if square_exists(new_coordinate) or not_friendly_fire(self, new_coordinate):
+            if square_exists(new_coordinate) and square_empty(new_coordinate):
                 all_possible_moves += [new_coordinate]
-            self.first_move = False # doesnt works correctly
         else :
-            # if not first move moves only a single step
             new_coordinate = Coordinates(self.coordinates.rank + 1 if self.is_white else self.coordinates.rank - 1 , self.coordinates.file)
-            if square_exists(new_coordinate) or not_friendly_fire(self, new_coordinate):
+            if square_exists(new_coordinate) and square_empty(new_coordinate):
                 all_possible_moves += [new_coordinate]
-
-        # moves to capture diagonally
+        
         new_coordinate = Coordinates(self.coordinates.rank + 1 if self.is_white else self.coordinates.rank - 1, self.coordinates.file - 1)
         if square_exists(new_coordinate) and not square_empty(new_coordinate) and not_friendly_fire(self, new_coordinate):
             all_possible_moves += [new_coordinate]

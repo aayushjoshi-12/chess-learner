@@ -1,2 +1,2 @@
-fix the pawn moves (first move twice functionality)
-use the enum class directions in no_check later
+integrate the gui and cli versions
+add castling en passant
